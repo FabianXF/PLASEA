@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Plasea Reportes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00c9a7, #1e3c72);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Contenedor principal */
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 1rem;
+        }
+
+        /* Título */
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Botones */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.8rem 0;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #2a5298, #3b6cb5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Enlace de olvidé contraseña */
+        a.forgot {
+            display: block;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a.forgot span {
+            color: #00ffe7;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        a.forgot:hover {
+            color: #ffffff;
+        }
+
+        a.forgot span:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsividad */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+                max-width: 90%;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.7rem;
+            }
+
+            a.forgot {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-user-lock"></i> Iniciar Sesión</h1>
+        <form method="get" th:action="@{/formulario-reportes}">
+            <button type="submit" class="btn"><i class="fas fa-chalkboard-teacher"></i> Profesor</button>
+        </form>
+        <form method="get" th:action="@{/formulario-auditor}">
+            <button type="submit" class="btn"><i class="fas fa-user-tie"></i> Auditor</button>
+        </form>
+		<form method="get" th:action="@{/admin/panel}">
+		    <button type="submit" class="btn"><i class="fas fa-user-shield"></i> Administrador</button>
+		</form>
+    </div>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93bde3470c2853e5',t:'MTc0NjU5MTIzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

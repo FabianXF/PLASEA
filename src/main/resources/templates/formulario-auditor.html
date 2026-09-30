@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Reportes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #00c9a7, #1e3c72);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Contenedor principal */
+        .form-container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        /* Encabezado */
+        .form-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-header img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .form-header h4 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .form-header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Fila de botones */
+        .button-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        /* Botones de reporte */
+        .report-button {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 25px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .report-button:hover {
+            background-color: rgba(0, 0, 0, 0.85);
+            transform: translateY(-2px);
+        }
+
+        .report-button:active {
+            transform: translateY(0);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            min-height: 200px;
+            padding: 15px;
+            color: white;
+            overflow-x: auto;
+        }
+
+        .dashboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dashboard th,
+        .dashboard td {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .dashboard th {
+            background-color: rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+        }
+
+        .dashboard p {
+            text-align: center;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Fila de botones al final */
+        .row-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Botón Regresar */
+        .button-full {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 25px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .button-full:hover {
+            background-color: rgba(0, 0, 0, 0.85);
+            transform: translateY(-2px);
+        }
+
+        .button-full:active {
+            transform: translateY(0);
+        }
+
+        /* Responsividad */
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            .form-header h4 {
+                font-size: 1.5rem;
+            }
+
+            .form-header p {
+                font-size: 0.9rem;
+            }
+
+            .report-button {
+                min-width: 120px;
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+
+            .button-full {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+
+            .dashboard th,
+            .dashboard td {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <img src="/images/logo.png" alt="Logo" th:src="@{/images/logo.png}" onerror="this.style.display='none'">
+            <h4><i class="fas fa-user-tie"></i> Auditor</h4>
+            <p>Universidad Simón Bolívar</p>
+        </div>
+        <div class="form-body">
+            <form th:action="@{/reporte/guardar}" method="post" enctype="multipart/form-data">
+                <div class="button-row">
+                    <button type="button" class="report-button" onclick="fetchReporteCarreras()"><i class="fas fa-graduation-cap"></i> Reporte Carreras</button>
+                    <button type="button" class="report-button" onclick="fetchReporteAsignaturas()"><i class="fas fa-book"></i> Reporte Asignaturas</button>
+                    <button type="button" class="report-button" onclick="fetchReporteCursos()"><i class="fas fa-chalkboard"></i> Reporte Cursos</button>
+                    <button type="button" class="report-button" onclick="fetchReporteGeneral()"><i class="fas fa-table"></i> Reporte General</button>
+                </div>
+                <div class="dashboard" id="dashboard">
+                    <!-- Espacio para visualizar los reportes -->
+                </div>
+                <div class="row-buttons">
+                    <a th:href="@{/inicio}" class="button-full"><i class="fas fa-arrow-left"></i> Regresar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function fetchReporteCarreras() {
+            fetch('/reporte/carreras', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el reporte de carreras: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const dashboard = document.getElementById('dashboard');
+                    if (data.length === 0) {
+                        dashboard.innerHTML = '<p>No se encontraron reportes de carreras.</p>';
+                        return;
+                    }
+                    let table = '<table><thead><tr><th>Carrera</th><th>Cantidad de Reportes</th></tr></thead><tbody>';
+                    data.forEach(item => {
+                        table += `<tr><td>${item.nombre || 'N/A'}</td><td>${item.cantidadReportes || 0}</td></tr>`;
+                    });
+                    table += '</tbody></table>';
+                    dashboard.innerHTML = table;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('dashboard').innerHTML = '<p>Error al cargar el reporte de carreras.</p>';
+                });
+        }
+
+        function fetchReporteAsignaturas() {
+            fetch('/reporte/asignaturas', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el reporte de asignaturas: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const dashboard = document.getElementById('dashboard');
+                    if (data.length === 0) {
+                        dashboard.innerHTML = '<p>No se encontraron reportes de asignaturas.</p>';
+                        return;
+                    }
+                    let table = '<table><thead><tr><th>Asignatura</th><th>Cantidad de Reportes</th></tr></thead><tbody>';
+                    data.forEach(item => {
+                        table += `<tr><td>${item.asignaturaNombre || 'N/A'}</td><td>${item.cantidadReportes || 0}</td></tr>`;
+                    });
+                    table += '</tbody></table>';
+                    dashboard.innerHTML = table;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('dashboard').innerHTML = '<p>Error al cargar el reporte de asignaturas.</p>';
+                });
+        }
+
+        function fetchReporteCursos() {
+            fetch('/reporte/cursos', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el reporte de cursos: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const dashboard = document.getElementById('dashboard');
+                    if (data.length === 0) {
+                        dashboard.innerHTML = '<p>No se encontraron reportes de cursos.</p>';
+                        return;
+                    }
+                    let table = '<table><thead><tr><th>Curso ID</th><th>Semestre</th><th>Grupo</th><th>Cantidad de Reportes</th></tr></thead><tbody>';
+                    data.forEach(item => {
+                        table += `<tr><td>${item.idCurso || 'N/A'}</td><td>${item.semestreAcademico || 'N/A'}</td><td>${item.grupo || 'N/A'}</td><td>${item.cantidadReportes || 0}</td></tr>`;
+                    });
+                    table += '</tbody></table>';
+                    dashboard.innerHTML = table;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('dashboard').innerHTML = '<p>Error al cargar el reporte de cursos.</p>';
+                });
+        }
+
+        function fetchReporteGeneral() {
+            fetch('/reporte/general', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el reporte general: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const dashboard = document.getElementById('dashboard');
+                    if (data.length === 0) {
+                        dashboard.innerHTML = '<p>No se encontraron reportes generales.</p>';
+                        return;
+                    }
+                    let table = '<table><thead><tr>' +
+                        '<th>ID Reporte</th>' +
+                        '<th>Profesor</th>' +
+                        '<th>Carrera</th>' +
+                        '<th>Curso</th>' +
+                        '<th>Estudiante</th>' +
+                        '<th>Motivo</th>' +
+                        '<th>Fecha</th>' +
+                        '<th>Calificación</th>' +
+						'<th>Comentario</th>'+
+                        '</tr></thead><tbody>';
+                    data.forEach(item => {
+                        table += `<tr>
+                                    <td>${item.idReporte || 'N/A'}</td>
+                                    <td>${item.nombreProfesor || 'N/A'}</td>
+                                    <td>${item.nombreCarrera || 'N/A'}</td>
+                                    <td>${item.curso || 'N/A'}</td>
+                                    <td>${item.nombreEstudiante || 'N/A'}</td>
+                                    <td>${item.motivo || 'N/A'}</td>
+                                    <td>${item.fecha || 'N/A'}</td>
+                                    <td>${item.calificacion ?? 'N/A'}</td>
+									<td>${item.comentario ?? 'N/A'}</td>
+                                  </tr>`;
+                    });
+                    table += '</tbody></table>';
+                    dashboard.innerHTML = table;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('dashboard').innerHTML = '<p>Error al cargar el reporte general.</p>';
+                });
+        }
+    </script>
+</body>
+</html>

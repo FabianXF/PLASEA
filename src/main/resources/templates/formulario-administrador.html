@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #00c9a7, #1e3c72);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-header img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .form-header h4 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .form-header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .report-button {
+            padding: 12px 18px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 25px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 20px;
+        }
+
+        .report-button:hover {
+            background-color: rgba(0, 0, 0, 0.85);
+            transform: translateY(-2px);
+        }
+
+        .report-button:active {
+            transform: translateY(0);
+        }
+
+        .dashboard {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            min-height: 200px;
+            padding: 15px;
+            color: white;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .dashboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dashboard th,
+        .dashboard td {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .dashboard th {
+            background-color: rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+        }
+
+        .dashboard p {
+            text-align: center;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .action-button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .edit-button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .edit-button:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 12px 18px;
+            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 25px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-link:hover {
+            background-color: rgba(0, 0, 0, 0.85);
+            transform: translateY(-2px);
+        }
+
+        .btn-link:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .form-header h4 {
+                font-size: 1.5rem;
+            }
+
+            .form-header p {
+                font-size: 0.9rem;
+            }
+
+            .report-button {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+
+            .dashboard th,
+            .dashboard td {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+
+            .action-button {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+            }
+
+            .btn-link {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <img src="/images/logo.png" alt="Logo" th:src="@{/images/logo.png}" onerror="this.style.display='none'">
+            <h4><i class="fas fa-user-shield"></i> Administrador</h4>
+            <p>Panel de Gestión de Reportes</p>
+        </div>
+        <h2><i class="fas fa-tachometer-alt"></i> Panel de Administrador</h2>
+        <button type="button" class="report-button" onclick="fetchReporteGeneral()"><i class="fas fa-table"></i> Visualizar Reportes</button>
+        <div class="dashboard" id="dashboard">
+            <!-- Espacio para visualizar los reportes -->
+        </div>
+        <a th:href="@{/inicio}" class="btn-link"><i class="fas fa-arrow-left"></i> Regresar</a>
+    </div>
+    <script>
+        function fetchReporteGeneral() {
+            fetch('/reporte/general', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el reporte general: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const dashboard = document.getElementById('dashboard');
+                    if (data.length === 0) {
+                        dashboard.innerHTML = '<p>No se encontraron reportes.</p>';
+                        return;
+                    }
+                    let table = '<table><thead><tr>' +
+                        '<th>ID Reporte</th>' +
+                        '<th>Profesor</th>' +
+                        '<th>Carrera</th>' +
+                        '<th>Curso</th>' +
+                        '<th>Estudiante</th>' +
+                        '<th>Motivo</th>' +
+                        '<th>Fecha</th>' +
+                        '<th>Calificación</th>' +
+                        '<th>Comentario</th>' +
+                        '<th>Acciones</th>' +
+                        '</tr></thead><tbody>';
+                    data.forEach(item => {
+                        table += `<tr>
+                                    <td>${item.idReporte || 'N/A'}</td>
+                                    <td>${item.nombreProfesor || 'N/A'}</td>
+                                    <td>${item.nombreCarrera || 'N/A'}</td>
+                                    <td>${item.curso || 'N/A'}</td>
+                                    <td>${item.nombreEstudiante || 'N/A'}</td>
+                                    <td>${item.motivo || 'N/A'}</td>
+                                    <td>${item.fecha || 'N/A'}</td>
+                                    <td>${item.calificacion ?? 'N/A'}</td>
+                                    <td>${item.comentario || 'N/A'}</td>
+                                    <td class="action-buttons">
+                                        <button class="action-button edit-button" onclick="editReporte(${item.idReporte})"><i class="fas fa-edit"></i> Editar</button>
+                                        <button class="action-button delete-button" onclick="deleteReporte(${item.idReporte})"><i class="fas fa-trash"></i> Eliminar</button>
+                                    </td>
+                                  </tr>`;
+                    });
+                    table += '</tbody></table>';
+                    dashboard.innerHTML = table;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('dashboard').innerHTML = '<p>Error al cargar el reporte general.</p>';
+                });
+        }
+
+        function deleteReporte(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este reporte?')) {
+                return;
+            }
+
+            fetch(`/reporte/eliminar/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al eliminar el reporte: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(message => {
+                    alert('Reporte eliminado con éxito');
+                    fetchReporteGeneral();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el reporte: ' + error.message);
+                });
+        }
+
+        function editReporte(id) {
+            window.location.href = `/reporte/editar/${id}`;
+        }
+    </script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93bdef6eecb8676f',t:'MTc0NjU5MTczNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

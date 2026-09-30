@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Reporte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, #00c9a7, #1e3c72);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Contenedor principal */
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        /* Título */
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Grupo de formularios */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Campos de entrada */
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white; /* Color por defecto para otros inputs */
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste específico para los select y sus opciones */
+        select {
+            color: #333; /* Texto oscuro para contraste contra el fondo claro */
+            -webkit-appearance: none; /* Elimina el estilo por defecto en algunos navegadores */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Flecha personalizada */
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        /* Color de las opciones dentro del select */
+        select option {
+            color: #333; /* Texto oscuro para las opciones */
+            background-color: #fff; /* Fondo blanco para las opciones desplegadas */
+        }
+
+        /* Cuando el select está enfocado, el texto puede mantenerse blanco si el fondo cambia */
+        select:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Botones y enlaces */
+        button,
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 12px 18px;
+            margin: 10px 5px 0 0;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover,
+        .btn-link:hover {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+
+        /* Botón de editar */
+        .btn-edit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 5px 8px; /* Reducido el padding para ocupar menos espacio */
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+        }
+
+        .btn-edit:hover {
+            background-color: #0056b3;
+        }
+
+        /* Mensajes de éxito/error */
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+            text-align: left;
+        }
+
+        .message.success {
+            background-color: rgba(223, 240, 216, 0.8);
+            color: #3c763d;
+        }
+
+        .message.error {
+            background-color: rgba(242, 222, 222, 0.8);
+            color: #a94442;
+        }
+
+        /* Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            table-layout: auto; /* Permite que las columnas se ajusten al contenido */
+        }
+
+        th,
+        td {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px; /* Reducido el padding para celdas */
+            color: white;
+            text-align: center;
+            font-size: 12px; /* Reducido el tamaño de fuente para que quepa mejor */
+            white-space: normal; /* Permite que el texto se ajuste dentro de la celda */
+            word-wrap: break-word; /* Permite que las palabras largas se dividan */
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+        }
+
+        /* Ajuste específico para la columna de acción */
+        th.action-column,
+        td.action-column {
+            width: 80px; /* Ancho fijo para la columna de acción */
+            min-width: 80px; /* Asegura que no se reduzca demasiado */
+        }
+
+        /* Estilo para el contenedor de búsqueda de cédula */
+        .cedula-search {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        /* Enlace Regresar */
+        .btn-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #ffffff;
+        }
+
+        .btn-link span {
+            color: #00ffe7;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .btn-link span:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsividad */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            button,
+            .btn-link {
+                font-size: 13px;
+                padding: 10px 15px;
+            }
+
+            input[type="text"],
+            input[type="date"],
+            input[type="number"],
+            select,
+            textarea {
+                font-size: 13px;
+            }
+
+            .cedula-search {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cedula-search button {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .btn-edit {
+                font-size: 10px;
+                padding: 4px 6px; /* Más pequeño en pantallas pequeñas */
+            }
+
+            th,
+            td {
+                font-size: 10px; /* Aún más pequeño en pantallas pequeñas */
+                padding: 6px;
+            }
+
+            th.action-column,
+            td.action-column {
+                width: 60px; /* Reducir el ancho en pantallas pequeñas */
+                min-width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="fas fa-file-alt"></i> Formulario de Reporte</h2>
+
+        <div class="cedula-search">
+            <div class="form-group">
+                <label for="cedula">Cédula</label>
+                <input type="text" id="cedula" name="cedula" maxlength="12" oninput="validateCedula()">
+            </div>
+            <button onclick="fetchCarreras()"><i class="fas fa-search"></i> Buscar</button>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="reporteForm">
+            <div class="form-group">
+                <label for="carrera">Carrera</label>
+                <select id="carrera" name="carrera" onchange="fetchAsignaturas()">
+                    <option value="">Seleccione una carrera</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="asignatura">Asignatura</label>
+                <select id="asignatura" name="asignatura" onchange="fetchCursos()">
+                    <option value="">Seleccione una asignatura</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="curso">Curso</label>
+                <select id="curso" name="curso" onchange="fetchAlumnos()">
+                    <option value="">Seleccione un curso</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="alumno">Alumno</label>
+                <select id="alumno" name="alumno">
+                    <option value="">Seleccione un alumno</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="motivo">Motivo</label>
+                <select id="motivo" name="motivo">
+                    <option value="">Seleccione un motivo</option>
+                    <option value="Inasistencia">Inasistencia</option>
+                    <option value="Bajo rendimiento">Bajo rendimiento</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha">
+            </div>
+
+            <div class="form-group">
+                <label for="calificacion">Calificación</label>
+                <input type="number" id="calificacion" name="calificacion" step="0.01" min="0" max="10">
+            </div>
+
+            <div class="form-group">
+                <label for="comentario">Comentario (Opcional)</label>
+                <textarea id="comentario" name="comentario" rows="4"></textarea>
+            </div>
+
+            <button type="button" onclick="submitReporte()"><i class="fas fa-save"></i> Guardar Reporte</button>
+            <button type="button" onclick="fetchReporteGeneral()"><i class="fas fa-table"></i> Visualizar Reportes</button>
+            <a th:href="@{/inicio}" class="btn-link"><i class="fas fa-arrow-left"></i> Regresar</a>
+        </form>
+
+        <div id="dashboard"></div>
+    </div>
+
+    <script>
+        function validateCedula() {
+            const cedulaInput = document.getElementById('cedula');
+            cedulaInput.value = cedulaInput.value.replace(/[^0-9]/g, '');
+            if (cedulaInput.value.length > 12) {
+                cedulaInput.value = cedulaInput.value.slice(0, 12);
+            }
+        }
+
+        function clearCarreras() {
+            const carreraSelect = document.getElementById('carrera');
+            carreraSelect.innerHTML = '<option value="">Seleccione una carrera</option>';
+            clearAsignaturas();
+        }
+
+        function clearAsignaturas() {
+            const asignaturaSelect = document.getElementById('asignatura');
+            asignaturaSelect.innerHTML = '<option value="">Seleccione una asignatura</option>';
+            clearCursos();
+        }
+
+        function clearCursos() {
+            const cursoSelect = document.getElementById('curso');
+            cursoSelect.innerHTML = '<option value="">Seleccione un curso</option>';
+            clearAlumnos();
+        }
+
+        function clearAlumnos() {
+            const alumnoSelect = document.getElementById('alumno');
+            alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
+        }
+
+        function fetchCarreras() {
+            const cedula = document.getElementById('cedula').value;
+            const messageDiv = document.getElementById('message');
+            if (!/^\d+$/.test(cedula)) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'La cédula debe contener solo números.';
+                messageDiv.style.display = 'block';
+                clearCarreras();
+                return;
+            }
+            fetch(`/reporte/buscar-carreras?cedula=${encodeURIComponent(cedula)}`)
+                .then(response => {
+                    console.log('Respuesta del servidor para carreras:', response.status, response.statusText);
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text || `Error al buscar carreras: Estado ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Datos de carreras recibidos:', data);
+                    const carreraSelect = document.getElementById('carrera');
+                    carreraSelect.innerHTML = '<option value="">Seleccione una carrera</option>';
+                    if (data && data.length > 0) {
+                        data.forEach(carrera => {
+                            const option = document.createElement('option');
+                            option.value = carrera.idCarrera;
+                            option.textContent = carrera.nombre;
+                            carreraSelect.appendChild(option);
+                        });
+                        messageDiv.style.display = 'none';
+                    } else {
+                        messageDiv.className = 'message error';
+                        messageDiv.textContent = 'No se encontraron carreras asociadas a esta cédula.';
+                        messageDiv.style.display = 'block';
+                    }
+                    clearAsignaturas();
+                })
+                .catch(error => {
+                    console.error('Error en fetchCarreras:', error);
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message;
+                    messageDiv.style.display = 'block';
+                    clearCarreras();
+                });
+        }
+
+        function fetchAsignaturas() {
+            const cedula = document.getElementById('cedula').value;
+            const carreraId = document.getElementById('carrera').value;
+            const messageDiv = document.getElementById('message');
+            if (!carreraId) {
+                clearAsignaturas();
+                return;
+            }
+            fetch(`/reporte/buscar-asignaturas?cedula=${encodeURIComponent(cedula)}&idCarrera=${encodeURIComponent(carreraId)}`)
+                .then(response => {
+                    console.log('Respuesta del servidor para asignaturas:', response.status, response.statusText);
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error('No se encontraron asignaturas para esta carrera.');
+                        } else if (response.status === 500) {
+                            throw new Error('Error interno del servidor al buscar asignaturas.');
+                        } else {
+                            throw new Error('Error al buscar asignaturas: Estado ' + response.status);
+                        }
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Datos de asignaturas recibidos:', data);
+                    const asignaturaSelect = document.getElementById('asignatura');
+                    asignaturaSelect.innerHTML = '<option value="">Seleccione una asignatura</option>';
+                    if (data && data.length > 0) {
+                        data.forEach(asignatura => {
+                            const option = document.createElement('option');
+                            option.value = asignatura.idAsignatura;
+                            option.textContent = asignatura.nombre;
+                            asignaturaSelect.appendChild(option);
+                        });
+                        messageDiv.style.display = 'none';
+                    } else {
+                        messageDiv.className = 'message error';
+                        messageDiv.textContent = 'No se encontraron asignaturas para esta carrera.';
+                        messageDiv.style.display = 'block';
+                    }
+                    clearCursos();
+                })
+                .catch(error => {
+                    console.error('Error en fetchAsignaturas:', error);
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message;
+                    messageDiv.style.display = 'block';
+                    clearAsignaturas();
+                });
+        }
+
+        function fetchCursos() {
+            const cedula = document.getElementById('cedula').value;
+            const carreraId = document.getElementById('carrera').value;
+            const asignaturaId = document.getElementById('asignatura').value;
+            const messageDiv = document.getElementById('message');
+            if (!asignaturaId) {
+                clearCursos();
+                return;
+            }
+            fetch(`/reporte/buscar-cursos?cedula=${encodeURIComponent(cedula)}&idCarrera=${encodeURIComponent(carreraId)}&idAsignatura=${encodeURIComponent(asignaturaId)}`)
+                .then(response => {
+                    console.log('Respuesta del servidor para cursos:', response.status, response.statusText);
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error('No se encontraron cursos para esta asignatura.');
+                        } else if (response.status === 500) {
+                            throw new Error('Error interno del servidor al buscar cursos.');
+                        } else {
+                            throw new Error('Error al buscar cursos: Estado ' + response.status);
+                        }
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Datos de cursos recibidos:', data);
+                    const cursoSelect = document.getElementById('curso');
+                    cursoSelect.innerHTML = '<option value="">Seleccione un curso</option>';
+                    if (data && data.length > 0) {
+                        data.forEach(curso => {
+                            const option = document.createElement('option');
+                            option.value = curso.idCurso;
+                            option.textContent = curso.nombre;
+                            cursoSelect.appendChild(option);
+                        });
+                        messageDiv.style.display = 'none';
+                    } else {
+                        messageDiv.className = 'message error';
+                        messageDiv.textContent = 'No se encontraron cursos para esta asignatura.';
+                        messageDiv.style.display = 'block';
+                    }
+                    clearAlumnos();
+                })
+                .catch(error => {
+                    console.error('Error en fetchCursos:', error);
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message;
+                    messageDiv.style.display = 'block';
+                    clearCursos();
+                });
+        }
+
+        function fetchAlumnos() {
+            const cursoId = document.getElementById('curso').value;
+            const messageDiv = document.getElementById('message');
+            if (!cursoId) {
+                clearAlumnos();
+                return;
+            }
+            fetch(`/reporte/buscar-alumnos?idCurso=${encodeURIComponent(cursoId)}`)
+                .then(response => {
+                    console.log('Respuesta del servidor para alumnos:', response.status, response.statusText);
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error('No se encontraron alumnos para este curso.');
+                        } else if (response.status === 500) {
+                            throw new Error('Error interno del servidor al buscar alumnos.');
+                        } else {
+                            throw new Error('Error al buscar alumnos: Estado ' + response.status);
+                        }
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Datos de alumnos recibidos:', data);
+                    const alumnoSelect = document.getElementById('alumno');
+                    alumnoSelect.innerHTML = '<option value="">Seleccione un alumno</option>';
+                    if (data && data.length > 0) {
+                        data.forEach(alumno => {
+                            const option = document.createElement('option');
+                            option.value = alumno.idEstudiante;
+                            option.textContent = alumno.nombre;
+                            alumnoSelect.appendChild(option);
+                        });
+                        messageDiv.style.display = 'none';
+                    } else {
+                        messageDiv.className = 'message error';
+                        messageDiv.textContent = 'No se encontraron alumnos para este curso.';
+                        messageDiv.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en fetchAlumnos:', error);
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message;
+                    messageDiv.style.display = 'block';
+                    clearAlumnos();
+                });
+        }
+
+        function submitReporte() {
+            const cedula = document.getElementById('cedula').value;
+            const carrera = document.getElementById('carrera').value;
+            const asignatura = document.getElementById('asignatura').value;
+            const curso = document.getElementById('curso').value;
+            const idEstudiante = document.getElementById('alumno').value;
+            const motivo = document.getElementById('motivo').value;
+            const fecha = document.getElementById('fecha').value;
+            const calificacion = document.getElementById('calificacion').value;
+            const comentario = document.getElementById('comentario').value;
+            const messageDiv = document.getElementById('message');
+
+            if (!cedula || !carrera || !asignatura || !curso || !idEstudiante || !motivo || !fecha || !calificacion) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Por favor, complete todos los campos obligatorios.';
+                messageDiv.style.display = 'block';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('cedula', cedula);
+            formData.append('carrera', carrera);
+            formData.append('asignatura', asignatura);
+            formData.append('curso', curso);
+            formData.append('idEstudiante', idEstudiante);
+            formData.append('motivo', motivo);
+            formData.append('fecha', fecha);
+            formData.append('calificacion', calificacion);
+            if (comentario) formData.append('comentario', comentario);
+
+            fetch('/reporte/guardar', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    console.log('Respuesta del servidor al guardar reporte:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error('Error al guardar el reporte: ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log('Resultado del guardado:', data);
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = data;
+                    messageDiv.style.display = 'block';
+                    document.getElementById('reporteForm').reset();
+                    clearCarreras();
+                    document.getElementById('cedula').value = cedula;
+                })
+                .catch(error => {
+                    console.error('Error en submitReporte:', error);
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message;
+                    messageDiv.style.display = 'block';
+                });
+        }
+
+        function fetchReporteGeneral() {
+            const cedula = document.getElementById('cedula').value;
+            const messageDiv = document.getElementById('message');
+            const dashboard = document.getElementById('dashboard');
+
+            if (!cedula) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Por favor, ingrese su cédula antes de visualizar los reportes.';
+                messageDiv.style.display = 'block';
+                dashboard.innerHTML = '';
+                return;
+            }
+
+            fetch(`/reporte/general?cedula=${encodeURIComponent(cedula)}`)
+                .then(response => {
+                    console.log('Respuesta del servidor para reporte general:', response.status, response.statusText);
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text || 'Error al obtener el reporte general: ' + response.status);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Datos de reporte general recibidos:', data);
+                    dashboard.innerHTML = '';
+                    if (!data || data.length === 0) {
+                        messageDiv.className = 'message error';
+                        messageDiv.textContent = 'No se encontraron reportes asociados a esta cédula.';
+                        messageDiv.style.display = 'block';
+                        return;
+                    }
+                    let table = '<table><thead><tr>' +
+                        '<th>ID Reporte</th>' +
+                        '<th>Profesor</th>' +
+                        '<th>Carrera</th>' +
+                        '<th>ID Curso</th>' +
+                        '<th>Estudiante</th>' +
+                        '<th>Motivo</th>' +
+                        '<th>Fecha</th>' +
+                        '<th>Calificación</th>' +
+                        '<th class="action-column">Acción</th>' +
+                        '</tr></thead><tbody>';
+                    data.forEach(item => {
+                        table += `<tr>
+                                    <td>${item.idReporte}</td>
+                                    <td>${item.nombreProfesor}</td>
+                                    <td>${item.nombreCarrera}</td>
+                                    <td>${item.idCurso}</td>
+                                    <td>${item.nombreEstudiante}</td>
+                                    <td>${item.motivo}</td>
+                                    <td>${item.fecha}</td>
+                                    <td>${item.calificacion}</td>
+                                    <td class="action-column"><a href="/reporte/editar/${item.idReporte}" class="btn-edit"><i class="fas fa-edit"></i> Editar</a></td>
+                                  </tr>`;
+                    });
+                    table += '</tbody></table>';
+                    dashboard.innerHTML = table;
+                    messageDiv.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error en fetchReporteGeneral:', error);
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = error.message;
+                    messageDiv.style.display = 'block';
+                    dashboard.innerHTML = '';
+                });
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c1b5f4b8c57b93',t:'MTc0NjYzMTMyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
